@@ -108,7 +108,7 @@ const NERVE_SITES = [
     cause: "C5/C6 disc herniation and C6/C7 disc bulge compressing the exiting nerve roots.",
     description:
       "The downstream hub. These roots form the brachial plexus that supplies the shoulder, arm and hand, so irritation here radiates down the whole limb (cervical radiculopathy).",
-    refersTo: ["shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
+    refersTo: ["thoracic-outlet", "shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
     originFrom: [],
     personal: true,
     personalNote:
@@ -178,7 +178,7 @@ const NERVE_SITES = [
     cause: "Radicular pain from C5/C6 traveling down the arm; muscles lock up defensively.",
     description: "Aching/tight band down the upper arm as the irritated root refers along its length.",
     refersTo: ["elbow"],
-    originFrom: ["lower-cervical", "shoulder-ant", "shoulder-post"],
+    originFrom: ["lower-cervical", "thoracic-outlet", "shoulder-ant", "shoulder-post"],
     personal: true,
     personalNote: "Part of the radiating 'short-circuit' from your lower-cervical roots."
   },
@@ -261,7 +261,7 @@ const NERVE_SITES = [
     nerves: ["Lumbar nerve roots", "Sciatic nerve (origin)"],
     cause: "Lumbar disc or facet irritation compressing the L4–S1 roots.",
     description: "The lumbar mirror of your neck: roots here form the sciatic nerve and refer down the leg.",
-    refersTo: ["buttock-hip", "post-thigh", "calf", "foot"],
+    refersTo: ["buttock-hip", "ant-thigh", "post-thigh", "calf", "foot"],
     originFrom: []
   },
   {
@@ -337,7 +337,7 @@ const NERVE_SITES = [
     cause: "Sciatic continuation (tibial/peroneal branches) referred from above.",
     description: "Calf pain or cramping along the tibial/peroneal corridor — often the tail end of a sciatic pattern.",
     refersTo: ["foot"],
-    originFrom: ["lumbar", "post-thigh"]
+    originFrom: ["lumbar", "buttock-hip", "post-thigh"]
   },
   {
     id: "foot",
