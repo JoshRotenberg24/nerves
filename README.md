@@ -21,9 +21,12 @@ from branch).
 
 ## How it works
 
-- **Front / Back** toggle switches the body view. Each highlighted point is a pain site.
+- **Rotate the body** through four angles — Front → Left side → Back → Right side — with the
+  ◄ ► buttons, the slider, **arrow keys**, or by **dragging** the figure (pseudo-3D: hand-drawn
+  SVG frames, no 3D engine, fully offline). Each highlighted point is a pain site.
   - 🔴 red = an issue from your own documented clinical picture
   - 🟢 green = a general reference site
+  - Side views show a curated subset; a site only appears on the angles where it's visible.
 - **Click a point** (or a list item) to open its detail card:
   - involved **nerve roots** and **peripheral nerves**
   - what's happening and the common structural cause
@@ -50,8 +53,9 @@ extend it. Each entry looks like:
   label: "Ring & pinky finger",
   region: "Hand & forearm",
   side: "left",
-  front: { x: 190, y: 292 },   // hotspot on the front view (viewBox 0 0 240 560)
-  // back: { x, y },           // optional: also show on the back view
+  front: { x: 190, y: 292 },   // hotspot per view (viewBox 0 0 240 560)
+  left:  { x: 110, y: 288 },   // also shown on the left-side view
+  // back / right: { x, y },   // optional: add coords for any other angle
   roots: ["C8"],
   nerves: ["Ulnar nerve"],
   cause: "…",

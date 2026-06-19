@@ -23,14 +23,19 @@
   <main class="layout">
     <!-- Body map -->
     <section class="map-panel" aria-label="Body map">
-      <div class="view-toggle" role="tablist" aria-label="Body view">
-        <button id="btn-front" class="view-btn is-active" role="tab" aria-selected="true">Front</button>
-        <button id="btn-back" class="view-btn" role="tab" aria-selected="false">Back</button>
+      <div class="rotate-control">
+        <button id="rotate-left" class="rot-btn" aria-label="Rotate left">&#9664;</button>
+        <div class="rotate-mid">
+          <span id="view-label" class="view-label">Front</span>
+          <input id="rotate-slider" type="range" min="0" max="3" step="1" value="0"
+                 aria-label="Rotate body" />
+        </div>
+        <button id="rotate-right" class="rot-btn" aria-label="Rotate right">&#9654;</button>
       </div>
 
       <div class="map-wrap">
-        <svg id="body-map" viewBox="0 0 240 560" role="img"
-             aria-label="Clickable body diagram. Select a highlighted pain site.">
+        <svg id="body-map" viewBox="0 0 240 560" role="img" tabindex="0"
+             aria-label="Clickable body diagram. Drag or use arrow keys to rotate; select a highlighted pain site.">
           <!-- Silhouette + hotspots injected by app.js -->
         </svg>
       </div>

@@ -7,15 +7,17 @@
  *                 (i.e. point at where it hurts -> find the referral nerve/source)
  *   - refersTo:   other places THIS site's nerve commonly projects pain to
  *
- * `front` / `back` give hotspot coordinates on the body diagram (viewBox 0 0 240 560).
- * A site can appear on one or both views.
+ * Hotspot coordinates are given per VIEW on a viewBox of 0 0 240 560:
+ *   front / back  — facing diagrams
+ *   left  / right — side (profile) diagrams, used by the rotate control
+ * A site only renders on the views for which it has coordinates, so side views
+ * can show a curated subset. Side-view positions are a hand-placed first pass —
+ * tweak the numbers here to nudge any dot.
  *
  * `personal: true` marks issues documented in your own clinical picture; these are
  * highlighted in the UI and explained in `personalNote`.
  *
  * Side convention: anatomical side ("your left" = the patient's left).
- * On the FRONT diagram your left appears on the right of the image; on the BACK
- * diagram your left appears on the left of the image. The UI states this in the legend.
  */
 
 const NERVE_SITES = [
@@ -26,6 +28,7 @@ const NERVE_SITES = [
     region: "Head & neck",
     side: "left",
     back: { x: 120, y: 62 },
+    left: { x: 134, y: 58 },
     roots: ["C2", "C3"],
     nerves: ["Greater occipital nerve", "Third occipital nerve", "C2/C3 medial branches"],
     cause: "C2/C3 facet joint irritation and suboccipital muscle spasm pulling on the occipital nerves.",
@@ -43,6 +46,7 @@ const NERVE_SITES = [
     region: "Head & neck",
     side: "left",
     back: { x: 120, y: 38 },
+    left: { x: 128, y: 32 },
     roots: ["C2", "C3"],
     nerves: ["Greater occipital nerve", "Lesser occipital nerve"],
     cause: "Occipital nerve irritation referred up from the C2/C3 segment.",
@@ -59,6 +63,7 @@ const NERVE_SITES = [
     region: "Head & neck",
     side: "left",
     front: { x: 138, y: 46 },
+    left: { x: 100, y: 46 },
     roots: ["C2"],
     nerves: ["Trigeminal nerve V1 (via the trigeminocervical nucleus)"],
     cause:
@@ -77,6 +82,7 @@ const NERVE_SITES = [
     region: "Head & neck",
     side: "left",
     front: { x: 134, y: 72 },
+    left: { x: 102, y: 70 },
     roots: ["C2", "C3"],
     nerves: ["Trigeminal nerve V3", "Upper cervical referral"],
     cause: "Referred tightness from upper-cervical muscle spasm and the trigeminocervical link.",
@@ -95,6 +101,8 @@ const NERVE_SITES = [
     side: "central",
     front: { x: 120, y: 98 },
     back: { x: 120, y: 98 },
+    left: { x: 126, y: 96 },
+    right: { x: 114, y: 96 },
     roots: ["C5", "C6", "C7"],
     nerves: ["Cervical nerve roots", "Brachial plexus (origin)"],
     cause: "C5/C6 disc herniation and C6/C7 disc bulge compressing the exiting nerve roots.",
@@ -112,6 +120,7 @@ const NERVE_SITES = [
     region: "Shoulder & arm",
     side: "left",
     front: { x: 146, y: 108 },
+    left: { x: 106, y: 108 },
     roots: ["C8", "T1"],
     nerves: ["Lower trunk of brachial plexus", "Subclavian vessels (in vascular TOS)"],
     cause:
@@ -128,6 +137,7 @@ const NERVE_SITES = [
     region: "Shoulder & arm",
     side: "left",
     front: { x: 156, y: 128 },
+    left: { x: 104, y: 124 },
     roots: ["C5", "C6"],
     nerves: ["Long head of biceps tendon", "Superior labrum anchor", "Musculocutaneous nerve"],
     cause: "Post-SLAP labral/biceps pathology — plus C5/C6 radicular pain layered on top (double crush).",
@@ -145,6 +155,7 @@ const NERVE_SITES = [
     region: "Shoulder & arm",
     side: "left",
     back: { x: 74, y: 116 },
+    left: { x: 132, y: 120 },
     roots: ["C5", "C6"],
     nerves: ["Suprascapular nerve", "Axillary nerve"],
     cause: "Posterior labrum / rotator cuff strain plus referred C5/C6 radicular pain.",
@@ -161,6 +172,7 @@ const NERVE_SITES = [
     region: "Shoulder & arm",
     side: "left",
     front: { x: 178, y: 170 },
+    left: { x: 108, y: 172 },
     roots: ["C5", "C6"],
     nerves: ["Axillary nerve", "Musculocutaneous nerve"],
     cause: "Radicular pain from C5/C6 traveling down the arm; muscles lock up defensively.",
@@ -176,6 +188,7 @@ const NERVE_SITES = [
     region: "Shoulder & arm",
     side: "left",
     front: { x: 182, y: 210 },
+    left: { x: 108, y: 214 },
     roots: ["C6", "C7"],
     nerves: ["Radial nerve", "Cervical radiculopathy referral"],
     cause: "Sharp pain shooting into the elbow as C6/C7 roots fire along the arm.",
@@ -191,6 +204,7 @@ const NERVE_SITES = [
     region: "Hand & forearm",
     side: "left",
     front: { x: 184, y: 244 },
+    left: { x: 108, y: 246 },
     roots: ["C6", "C7", "C8"],
     nerves: ["Median nerve", "Ulnar nerve"],
     cause: "Radicular referral continuing toward the hand; possible second compression at the elbow/wrist.",
@@ -206,6 +220,7 @@ const NERVE_SITES = [
     region: "Hand & forearm",
     side: "left",
     front: { x: 172, y: 290 },
+    left: { x: 104, y: 288 },
     roots: ["C6"],
     nerves: ["Median nerve"],
     cause: "Classic C6 distribution.",
@@ -220,6 +235,7 @@ const NERVE_SITES = [
     region: "Hand & forearm",
     side: "left",
     front: { x: 190, y: 292 },
+    left: { x: 110, y: 288 },
     roots: ["C8"],
     nerves: ["Ulnar nerve"],
     cause: "C8 distribution — suggests the C6/C7 bulge has worsened or a new C7/T1 protrusion.",
@@ -239,6 +255,8 @@ const NERVE_SITES = [
     region: "Back & hips",
     side: "central",
     back: { x: 120, y: 252 },
+    left: { x: 134, y: 252 },
+    right: { x: 106, y: 252 },
     roots: ["L4", "L5", "S1"],
     nerves: ["Lumbar nerve roots", "Sciatic nerve (origin)"],
     cause: "Lumbar disc or facet irritation compressing the L4–S1 roots.",
@@ -252,6 +270,8 @@ const NERVE_SITES = [
     region: "Back & hips",
     side: "left",
     back: { x: 92, y: 290 },
+    left: { x: 138, y: 290 },
+    right: { x: 102, y: 290 },
     roots: ["L5", "S1"],
     nerves: ["Sciatic nerve", "Piriformis entrapment"],
     cause: "Sciatic irritation at the spine or under the piriformis muscle.",
@@ -265,6 +285,8 @@ const NERVE_SITES = [
     region: "Leg & foot",
     side: "left",
     front: { x: 92, y: 332 },
+    left: { x: 132, y: 334 },
+    right: { x: 108, y: 334 },
     roots: ["L2", "L3"],
     nerves: ["Lateral femoral cutaneous nerve"],
     cause: "Compression of the lateral femoral cutaneous nerve at the groin (meralgia paresthetica).",
@@ -278,6 +300,8 @@ const NERVE_SITES = [
     region: "Leg & foot",
     side: "central",
     front: { x: 106, y: 342 },
+    left: { x: 106, y: 342 },
+    right: { x: 134, y: 342 },
     roots: ["L2", "L3", "L4"],
     nerves: ["Femoral nerve"],
     cause: "Upper-lumbar root or femoral nerve irritation.",
@@ -291,6 +315,8 @@ const NERVE_SITES = [
     region: "Leg & foot",
     side: "left",
     back: { x: 96, y: 362 },
+    left: { x: 134, y: 362 },
+    right: { x: 106, y: 362 },
     roots: ["S1"],
     nerves: ["Sciatic nerve"],
     cause: "Sciatic referral from the lumbar spine or buttock.",
@@ -304,6 +330,8 @@ const NERVE_SITES = [
     region: "Leg & foot",
     side: "left",
     back: { x: 100, y: 442 },
+    left: { x: 126, y: 442 },
+    right: { x: 114, y: 442 },
     roots: ["S1"],
     nerves: ["Tibial nerve", "Common peroneal nerve"],
     cause: "Sciatic continuation (tibial/peroneal branches) referred from above.",
@@ -318,6 +346,8 @@ const NERVE_SITES = [
     side: "left",
     front: { x: 106, y: 516 },
     back: { x: 106, y: 516 },
+    left: { x: 96, y: 516 },
+    right: { x: 144, y: 516 },
     roots: ["S1"],
     nerves: ["Tibial nerve (tarsal tunnel)", "Common peroneal nerve"],
     cause: "Tarsal tunnel entrapment (tibial) or peroneal involvement, or referral from above.",
