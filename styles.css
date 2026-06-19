@@ -78,88 +78,40 @@ html, body {
   top: 16px;
 }
 
-.rotate-control {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.rot-btn {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  background: var(--panel-2);
-  color: var(--ink);
+.scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  min-height: 360px;
+  background: radial-gradient(circle at 50% 35%, #18222e 0%, #0f1419 72%);
   border: 1px solid var(--line);
-  border-radius: 9px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  line-height: 1;
-  transition: background 0.15s, border-color 0.15s;
+  border-radius: 10px;
+  overflow: hidden;
+  touch-action: none; /* pointer drives orbit/zoom */
+  cursor: grab;
 }
-.rot-btn:hover { border-color: var(--accent); background: #28333f; }
-.rot-btn:active { background: var(--accent); color: #05121f; }
-.rotate-mid {
-  flex: 1;
+.scene:active { cursor: grabbing; }
+.scene canvas { display: block; width: 100% !important; height: 100% !important; }
+
+.scene-error {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-}
-.view-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--accent);
-}
-#rotate-slider {
-  width: 100%;
-  accent-color: var(--accent);
-  cursor: pointer;
-}
-
-.map-wrap {
-  display: flex;
   justify-content: center;
+  text-align: center;
+  gap: 6px;
+  padding: 22px;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
-#body-map {
-  width: 100%;
-  max-width: 320px;
-  height: auto;
-  touch-action: pan-y; /* allow vertical scroll, capture horizontal drag to rotate */
-  cursor: grab;
-}
-#body-map:active { cursor: grabbing; }
-#body-map:focus { outline: none; }
+.scene-error strong { color: var(--ink); }
 
-/* silhouette */
-.silhouette { fill: var(--panel-2); stroke: var(--line); stroke-width: 1.5; }
-
-/* hotspots */
-.hotspot { cursor: pointer; }
-.hotspot .hit {
-  fill: var(--general);
-  stroke: #0b0f14;
-  stroke-width: 1.5;
-  transition: r 0.12s, fill 0.12s;
-}
-.hotspot[data-personal="true"] .hit { fill: var(--personal); }
-.hotspot:hover .hit { r: 11; }
-.hotspot:focus { outline: none; }
-.hotspot:focus .hit { stroke: var(--ink); stroke-width: 2.5; }
-.hotspot.is-selected .hit {
-  stroke: #fff;
-  stroke-width: 3;
-}
-.hotspot.is-linked .hit {
-  fill: var(--linked);
-}
-.hotspot.is-dim { opacity: 0.35; }
-
-.orientation-note {
+.scene-hint {
   text-align: center;
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   margin: 10px 0 0;
 }
 
