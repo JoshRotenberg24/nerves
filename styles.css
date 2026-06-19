@@ -10,6 +10,7 @@
   --personal-soft: rgba(255, 107, 107, 0.16);
   --general: #6fb1a0;
   --linked: #ffd166;
+  --source: #5cd6ff;
   --radius: 12px;
   font-synthesis: none;
 }
@@ -131,6 +132,7 @@ html, body {
 .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 .dot-personal { background: var(--personal); }
 .dot-general { background: var(--general); }
+.dot-source { background: var(--source); }
 .dot-linked { background: var(--linked); }
 
 /* ---------------- Detail / search ---------------- */
@@ -226,6 +228,10 @@ html, body {
 }
 .link-btn:hover { border-color: var(--accent); background: #28333f; }
 .link-btn .arrow { color: var(--linked); font-weight: 700; }
+.link-source .arrow { color: var(--source); }
+.link-source:hover { border-color: var(--source); }
+.link-refer .arrow { color: var(--linked); }
+.link-refer:hover { border-color: var(--linked); }
 
 /* ---------------- List ---------------- */
 .list-heading {
@@ -280,5 +286,4 @@ html, body {
 @media (max-width: 760px) {
   .layout { grid-template-columns: 1fr; }
   .map-panel { position: static; }
-  #body-map { max-width: 260px; }
 }
