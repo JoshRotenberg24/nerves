@@ -16,8 +16,25 @@ python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-To host for free, push to GitHub and enable **GitHub Pages** (Settings → Pages → deploy
-from branch).
+To host for free, push to GitHub and deploy with **Vercel** (recommended) or enable
+**GitHub Pages** (Settings → Pages → deploy from branch).
+
+### Deploy to Vercel
+
+This is a zero-build static site, so no framework or build command is needed — the included
+[`vercel.json`](vercel.json) just enables clean URLs and a few security headers.
+
+**Dashboard (easiest):**
+1. Go to [vercel.com/new](https://vercel.com/new) and import the `JoshRotenberg24/nerves` repo.
+2. Framework Preset: **Other**. Leave Build Command and Output Directory **empty**.
+3. Click **Deploy**. Every push to the branch redeploys automatically.
+
+**CLI:**
+```bash
+npm i -g vercel
+vercel        # preview deploy (prompts to log in the first time)
+vercel --prod # promote to production
+```
 
 ## How it works
 
