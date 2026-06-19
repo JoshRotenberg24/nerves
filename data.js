@@ -107,6 +107,22 @@ const NERVE_SITES = [
       "Your documented C5/C6 herniation and C6/C7 bulge. New left ring/pinky symptoms point lower (C8 — possible C7/T1 involvement)."
   },
   {
+    id: "thoracic-outlet",
+    label: "Thoracic outlet (supraclavicular)",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 146, y: 108 },
+    roots: ["C8", "T1"],
+    nerves: ["Lower trunk of brachial plexus", "Subclavian vessels (in vascular TOS)"],
+    cause:
+      "Compression of the lower brachial plexus between the scalene muscles, the first rib, and the clavicle (thoracic outlet syndrome).",
+    description:
+      "A separate compression point between your neck and shoulder. Because it pinches the LOWER trunk (C8/T1), classic TOS produces ring/pinky symptoms — the same distribution as your new finding — plus a heavy, aching arm that worsens with overhead or carrying positions. Differential only, not a confirmed diagnosis: a C8/ulnar pattern can come from the neck (C7/T1 progression) OR from compression here, and it fits the postural double-crush picture (a hiked, forward-rolled shoulder narrows the outlet). A clinician can distinguish them with provocative tests and nerve studies.",
+    refersTo: ["upper-arm", "forearm", "ring-pinky"],
+    originFrom: ["lower-cervical"],
+    personal: false
+  },
+  {
     id: "shoulder-ant",
     label: "Front shoulder (pec / armpit)",
     region: "Shoulder & arm",
@@ -180,7 +196,7 @@ const NERVE_SITES = [
     cause: "Radicular referral continuing toward the hand; possible second compression at the elbow/wrist.",
     description: "The 'creaking' that travels wrist-to-shoulder when you straighten the arm tracks this nerve corridor (biceps tendinopathy can add to it).",
     refersTo: ["thumb-index", "ring-pinky"],
-    originFrom: ["lower-cervical", "elbow"],
+    originFrom: ["lower-cervical", "elbow", "thoracic-outlet"],
     personal: true,
     personalNote: "Where the double-crush corridor (neck + shoulder) carries the signal toward the hand."
   },
@@ -210,10 +226,10 @@ const NERVE_SITES = [
     description:
       "Your new, prominent left ring/pinky symptoms map to C8 (ulnar), one level below your documented injuries.",
     refersTo: [],
-    originFrom: ["lower-cervical", "forearm"],
+    originFrom: ["lower-cervical", "forearm", "thoracic-outlet"],
     personal: true,
     personalNote:
-      "NEW symptom worth flagging to your team: a C8 pattern implies progression below the known C5/C6 and C6/C7 levels (possible C7/T1)."
+      "NEW symptom worth flagging to your team: a C8 pattern implies progression below the known C5/C6 and C6/C7 levels (possible C7/T1) — or compression at the thoracic outlet. Both are differentials worth distinguishing."
   },
 
   /* ----------------------- General lower-body coverage ----------------------- */
