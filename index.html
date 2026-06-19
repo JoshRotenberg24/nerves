@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nerve Pain Referral Guide</title>
+  <meta name="description" content="An interactive guide for chronic nerve pain: point to the pain site and find the referral nerves." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1>Nerve Pain Referral Guide</h1>
+    <p class="tagline">Point to where it hurts — find the nerve it may be coming from.</p>
+  </header>
+
+  <div class="disclaimer" role="note">
+    <strong>Not medical advice.</strong> This is a personal educational reference for tracking
+    your own documented nerve patterns. It does not diagnose, and it can't replace your care team.
+    If symptoms change or escalate (e.g. new vision loss, weakness, loss of bladder/bowel control),
+    contact a clinician.
+  </div>
+
+  <main class="layout">
+    <!-- Body map -->
+    <section class="map-panel" aria-label="Body map">
+      <div class="view-toggle" role="tablist" aria-label="Body view">
+        <button id="btn-front" class="view-btn is-active" role="tab" aria-selected="true">Front</button>
+        <button id="btn-back" class="view-btn" role="tab" aria-selected="false">Back</button>
+      </div>
+
+      <div class="map-wrap">
+        <svg id="body-map" viewBox="0 0 240 560" role="img"
+             aria-label="Clickable body diagram. Select a highlighted pain site.">
+          <!-- Silhouette + hotspots injected by app.js -->
+        </svg>
+      </div>
+
+      <p class="orientation-note" id="orientation-note">
+        Front view — as if facing you, so <em>your left</em> is on the right of the diagram.
+      </p>
+
+      <ul class="legend" aria-hidden="true">
+        <li><span class="dot dot-personal"></span> Your documented issue</li>
+        <li><span class="dot dot-general"></span> General reference site</li>
+        <li><span class="dot dot-linked"></span> Related / referral site</li>
+      </ul>
+    </section>
+
+    <!-- Detail + search -->
+    <section class="detail-panel" aria-label="Details">
+      <div class="search-box">
+        <label for="search" class="visually-hidden">Search pain sites and nerves</label>
+        <input id="search" type="search" placeholder="Search a site, nerve or root (e.g. C8, ulnar, sciatic)…" autocomplete="off" />
+      </div>
+
+      <div id="detail" class="detail-card" aria-live="polite">
+        <!-- Selected site details injected here -->
+        <div class="detail-empty">
+          <p>Select a point on the body, or pick from the list below.</p>
+        </div>
+      </div>
+
+      <div class="list-section">
+        <h2 class="list-heading">All sites</h2>
+        <ul id="site-list" class="site-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Personal reference tool · data is editable in <code>data.js</code></p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
