@@ -4,13 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nerve Pain Referral Guide</title>
-  <meta name="description" content="An interactive guide for chronic nerve pain: point to the pain site and find the referral nerves." />
+  <meta name="description" content="An interactive 3D guide for chronic nerve pain: rotate the body, follow each nerve from the spine to the pain site." />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Three.js (no build step) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <header class="site-header">
     <h1>Nerve Pain Referral Guide</h1>
-    <p class="tagline">Point to where it hurts — find the nerve it may be coming from.</p>
+    <p class="tagline">Rotate the body, follow each nerve from the spine to where it hurts.</p>
   </header>
 
   <div class="disclaimer" role="note">
@@ -21,33 +31,16 @@
   </div>
 
   <main class="layout">
-    <!-- Body map -->
-    <section class="map-panel" aria-label="Body map">
-      <div class="rotate-control">
-        <button id="rotate-left" class="rot-btn" aria-label="Rotate left">&#9664;</button>
-        <div class="rotate-mid">
-          <span id="view-label" class="view-label">Front</span>
-          <input id="rotate-slider" type="range" min="0" max="3" step="1" value="0"
-                 aria-label="Rotate body" />
-        </div>
-        <button id="rotate-right" class="rot-btn" aria-label="Rotate right">&#9654;</button>
-      </div>
-
-      <div class="map-wrap">
-        <svg id="body-map" viewBox="0 0 240 560" role="img" tabindex="0"
-             aria-label="Clickable body diagram. Drag or use arrow keys to rotate; select a highlighted pain site.">
-          <!-- Silhouette + hotspots injected by app.js -->
-        </svg>
-      </div>
-
-      <p class="orientation-note" id="orientation-note">
-        Front view — as if facing you, so <em>your left</em> is on the right of the diagram.
-      </p>
+    <!-- 3D nerve map -->
+    <section class="map-panel" aria-label="3D nerve map">
+      <div id="scene" class="scene" role="img"
+           aria-label="3D body showing nerves running from the spine to each pain site. Drag to rotate, scroll to zoom, and click a node to select it."></div>
+      <p class="scene-hint">Drag to rotate · scroll to zoom · click a node</p>
 
       <ul class="legend" aria-hidden="true">
         <li><span class="dot dot-personal"></span> Your documented issue</li>
         <li><span class="dot dot-general"></span> General reference site</li>
-        <li><span class="dot dot-linked"></span> Related / referral site</li>
+        <li><span class="dot dot-linked"></span> Related / referral path</li>
       </ul>
     </section>
 
@@ -59,9 +52,8 @@
       </div>
 
       <div id="detail" class="detail-card" aria-live="polite">
-        <!-- Selected site details injected here -->
         <div class="detail-empty">
-          <p>Select a point on the body, or pick from the list below.</p>
+          <p>Select a node on the body, or pick from the list below.</p>
         </div>
       </div>
 
@@ -77,6 +69,6 @@
   </footer>
 
   <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
