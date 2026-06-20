@@ -555,9 +555,17 @@ function routeNerve(THREE, s, start, end, wy) {
   var head = region === "Head & neck" && end.y > wy(96);
 
   if (arm) {
-    pts.push(new THREE.Vector3(sign * 0.25, wy(118), -0.05)); // exit the cervical spine
-    pts.push(new THREE.Vector3(sign * 1.1, wy(134), 0.18));   // over the shoulder girdle
-    if (end.y < wy(205)) pts.push(new THREE.Vector3(sign * 1.6, wy(214), 0.28)); // past the elbow
+    if (Math.abs(end.x) < 0.85 && end.y > wy(140)) {
+      // Proximal plexus / thoracic-outlet points sit right by the neck — route
+      // them with a short bow instead of looping all the way out to the shoulder.
+      var pm = start.clone().add(end).multiplyScalar(0.5);
+      pm.x += sign * 0.12; pm.z += 0.2;
+      pts.push(pm);
+    } else {
+      pts.push(new THREE.Vector3(sign * 0.25, wy(118), -0.05)); // exit the cervical spine
+      pts.push(new THREE.Vector3(sign * 1.1, wy(134), 0.18));   // over the shoulder girdle
+      if (end.y < wy(205)) pts.push(new THREE.Vector3(sign * 1.6, wy(214), 0.28)); // past the elbow
+    }
   } else if (leg) {
     pts.push(new THREE.Vector3(sign * 0.12, wy(258), -0.05)); // exit the lumbar spine
     pts.push(new THREE.Vector3(sign * 0.5, wy(294), 0.12));   // through the hip / buttock

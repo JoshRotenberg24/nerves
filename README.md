@@ -98,9 +98,13 @@ Built around your documented picture, then extended for general reference:
   with vision loss, referred jaw pain — including the radiofrequency ablation context.
 - **Lower cervical (C5–C7):** the C5/C6 herniation and C6/C7 bulge, radiating into the
   shoulder, arm, elbow, forearm, and the new C8/ulnar ring-and-pinky pattern.
-- **Thoracic outlet (differential):** the supraclavicular compression point that can
-  produce the same C8/T1 ring-and-pinky pattern — included as a differential, not a
-  confirmed diagnosis.
+- **Thoracic outlet (differential), mapped in detail:** the three compression spaces in
+  sequence — the **scalene triangle**, the **costoclavicular space** (clavicle/first rib),
+  and the **subcoracoid / pectoralis-minor space** — plus the two hallmark signs that
+  localize it: **inner-forearm** numbness (medial antebrachial cutaneous nerve, above the
+  elbow) and **Gilliatt–Sumner hand** wasting (T1). Clicking the ring/pinky now traces both
+  the cervical and the TOS pathways back to the lower trunk. Included as a differential, not
+  a confirmed diagnosis.
 - **Left shoulder:** post-SLAP anterior (pec/armpit) and posterior pain, with the
   double-crush link back to the cervical roots.
 - **Lower body (general):** lumbar, sciatic/piriformis, meralgia, femoral, and

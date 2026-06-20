@@ -108,7 +108,7 @@ const NERVE_SITES = [
     cause: "C5/C6 disc herniation and C6/C7 disc bulge compressing the exiting nerve roots.",
     description:
       "The downstream hub. These roots form the brachial plexus that supplies the shoulder, arm and hand, so irritation here radiates down the whole limb (cervical radiculopathy).",
-    refersTo: ["thoracic-outlet", "shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
+    refersTo: ["thoracic-outlet", "tos-scalene", "shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
     originFrom: [],
     personal: true,
     personalNote:
@@ -116,7 +116,7 @@ const NERVE_SITES = [
   },
   {
     id: "thoracic-outlet",
-    label: "Thoracic outlet (supraclavicular)",
+    label: "Thoracic outlet (overview)",
     region: "Shoulder & arm",
     side: "left",
     front: { x: 146, y: 108 },
@@ -126,8 +126,8 @@ const NERVE_SITES = [
     cause:
       "Compression of the lower brachial plexus between the scalene muscles, the first rib, and the clavicle (thoracic outlet syndrome).",
     description:
-      "A separate compression point between your neck and shoulder. Because it pinches the LOWER trunk (C8/T1), classic TOS produces ring/pinky symptoms — the same distribution as your new finding — plus a heavy, aching arm that worsens with overhead or carrying positions. Differential only, not a confirmed diagnosis: a C8/ulnar pattern can come from the neck (C7/T1 progression) OR from compression here, and it fits the postural double-crush picture (a hiked, forward-rolled shoulder narrows the outlet). A clinician can distinguish them with provocative tests and nerve studies.",
-    refersTo: ["upper-arm", "forearm", "ring-pinky"],
+      "A separate compression point between your neck and shoulder. Because it pinches the LOWER trunk (C8/T1), classic TOS produces ring/pinky symptoms — the same distribution as your new finding — plus a heavy, aching arm that worsens with overhead or carrying positions. The outlet narrows at three specific spaces in sequence — the scalene triangle, the costoclavicular space, and the subcoracoid / pectoralis-minor space — each mapped here as its own point. Differential only, not a confirmed diagnosis: a C8/ulnar pattern can come from the neck (C7/T1 progression) OR from compression here, and it fits the postural double-crush picture (a hiked, forward-rolled shoulder narrows the outlet). A clinician can distinguish them with provocative tests and nerve studies.",
+    refersTo: ["tos-scalene", "tos-costoclavicular", "tos-pecminor", "medial-forearm", "ring-pinky", "upper-arm"],
     originFrom: ["lower-cervical"],
     personal: false
   },
@@ -242,10 +242,97 @@ const NERVE_SITES = [
     description:
       "Your new, prominent left ring/pinky symptoms map to C8 (ulnar), one level below your documented injuries.",
     refersTo: [],
-    originFrom: ["lower-cervical", "forearm", "thoracic-outlet"],
+    originFrom: ["lower-cervical", "forearm", "thoracic-outlet", "tos-costoclavicular"],
     personal: true,
     personalNote:
       "NEW symptom worth flagging to your team: a C8 pattern implies progression below the known C5/C6 and C6/C7 levels (possible C7/T1) — or compression at the thoracic outlet. Both are differentials worth distinguishing."
+  },
+
+  /* ----------------------- Thoracic outlet — the three compression spaces ----------------------- */
+  {
+    id: "tos-scalene",
+    label: "Scalene triangle (interscalene TOS)",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 134, y: 104 },
+    left: { x: 110, y: 102 },
+    roots: ["C5", "C6", "C7", "C8", "T1"],
+    nerves: ["Brachial plexus roots / trunks", "Anterior & middle scalene muscles"],
+    cause:
+      "The brachial plexus is squeezed in the interscalene triangle between the anterior and middle scalene muscles — tight or spastic scalenes, a cervical rib, or a fibrous band.",
+    description:
+      "The most proximal and most common compression point in neurogenic TOS. The plexus leaves the neck between the two scalene muscles; when that gap narrows, the lower trunk (C8/T1) takes the brunt, producing inner-arm and ring/pinky symptoms that mimic a neck or ulnar problem.",
+    refersTo: ["tos-costoclavicular", "medial-forearm", "ring-pinky", "hand-intrinsics", "upper-arm"],
+    originFrom: ["lower-cervical"],
+    personal: false
+  },
+  {
+    id: "tos-costoclavicular",
+    label: "Costoclavicular space (clavicle / first rib)",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 148, y: 116 },
+    left: { x: 104, y: 114 },
+    roots: ["C8", "T1"],
+    nerves: ["Lower trunk of brachial plexus", "Subclavian artery & vein"],
+    cause:
+      "The neurovascular bundle is pinched between the clavicle and the first rib — narrowed by a drooped or retracted shoulder, a healed clavicle fracture, or a high first rib.",
+    description:
+      "The middle of the three thoracic-outlet spaces, and the one most often released surgically (first-rib resection). Because the subclavian vessels run here too, this is where the vascular forms of TOS (arm swelling or coldness) arise alongside the neural ones.",
+    refersTo: ["tos-pecminor", "medial-forearm", "ring-pinky", "hand-intrinsics"],
+    originFrom: ["tos-scalene", "lower-cervical"],
+    personal: false
+  },
+  {
+    id: "tos-pecminor",
+    label: "Subcoracoid / pectoralis-minor space",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 160, y: 126 },
+    left: { x: 98, y: 126 },
+    roots: ["C8", "T1"],
+    nerves: ["Cords of brachial plexus", "Pectoralis minor tendon", "Axillary vessels"],
+    cause:
+      "The cords of the plexus are compressed under the pectoralis minor as it crosses to the coracoid — typically with a forward-rolled, protracted shoulder or the arm raised overhead.",
+    description:
+      "The most distal thoracic-outlet space (pectoralis-minor / hyperabduction syndrome). Symptoms reproduce when the arm goes overhead, which tents the cords under a tight pec minor — the direct link to the postural, forward-shoulder picture.",
+    refersTo: ["medial-forearm", "ring-pinky", "upper-arm"],
+    originFrom: ["tos-costoclavicular"],
+    personal: false
+  },
+  {
+    id: "medial-forearm",
+    label: "Inner forearm (medial antebrachial cutaneous)",
+    region: "Hand & forearm",
+    side: "left",
+    front: { x: 176, y: 250 },
+    left: { x: 112, y: 248 },
+    roots: ["C8", "T1"],
+    nerves: ["Medial antebrachial cutaneous nerve", "Lower trunk / medial cord"],
+    cause:
+      "Compression of the lower trunk / medial cord at the thoracic outlet, upstream of the elbow.",
+    description:
+      "The single most useful localizing sign for TOS. The medial antebrachial cutaneous nerve branches off the plexus ABOVE the elbow, so numbness or burning along the inner forearm cannot be explained by a cubital-tunnel (elbow) ulnar pinch — it points to the lower trunk at the thoracic outlet, or to a C8/T1 root.",
+    refersTo: [],
+    originFrom: ["tos-scalene", "tos-costoclavicular", "tos-pecminor", "lower-cervical"],
+    personal: false
+  },
+  {
+    id: "hand-intrinsics",
+    label: "Hand wasting (Gilliatt–Sumner hand, T1)",
+    region: "Hand & forearm",
+    side: "left",
+    front: { x: 170, y: 300 },
+    left: { x: 104, y: 298 },
+    roots: ["T1", "C8"],
+    nerves: ["Median (thenar) & ulnar intrinsic muscles", "Lower trunk (T1)"],
+    cause:
+      "Chronic lower-trunk (T1) compression at the thoracic outlet denervating the small muscles of the hand.",
+    description:
+      "The motor end-stage of true neurogenic TOS. The classic 'Gilliatt–Sumner hand' wastes the thenar (thumb) pad more than the hypothenar, with weak pinch and grip. Visible wasting here is a red flag that warrants prompt nerve studies and specialist review.",
+    refersTo: [],
+    originFrom: ["tos-scalene", "tos-costoclavicular"],
+    personal: false
   },
 
   /* ----------------------- General lower-body coverage ----------------------- */
