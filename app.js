@@ -616,8 +616,14 @@ function makeRimMaterial(THREE, hex, power, intensity) {
   });
 }
 
-/* Schematic, translucent body: a soft inner skin plus a fresnel rim shell, with
- * the cross-section flattened front-to-back so it reads as a torso, not a tube. */
+/* Translucent, glowing male figure: a tapered (V-shaped) torso lathed from a
+ * side silhouette, a trapezius bridge with deltoid caps for broad shoulders,
+ * jointed two-segment arms (upper arm + forearm) and legs (thigh + calf), an
+ * ovoid head, and forward-pointing feet. Each part is drawn as a soft inner
+ * skin plus a fresnel rim shell, then the whole figure is flattened
+ * front-to-back so it reads as a body rather than a set of tubes. Every
+ * landmark stays anchored to the viewBox mapping (wx/wy) so the nerves and
+ * pain nodes still register on the figure. */
 function buildBody(THREE, wx, wy, COL) {
   var g = new THREE.Group();
   var skin = new THREE.MeshStandardMaterial({
@@ -625,30 +631,71 @@ function buildBody(THREE, wx, wy, COL) {
     roughness: 1.0, metalness: 0.0, depthWrite: false, side: THREE.DoubleSide
   });
   var rim = makeRimMaterial(THREE, 0x6fc0ff, 2.3, 1.05);
+  var Y = new THREE.Vector3(0, 1, 0);
 
-  function part(geo, x, y, z, rx) {
+  // Draw a geometry as both the soft skin and the glowing rim shell, placed by
+  // an optional callback so callers can position / orient / scale it.
+  function add(geo, place) {
     [skin, rim].forEach(function (mat) {
       var m = new THREE.Mesh(geo, mat);
-      m.position.set(x, y, z);
-      if (rx) m.rotation.x = rx;
+      if (place) place(m);
       g.add(m);
     });
   }
 
-  part(new THREE.SphereGeometry(0.46, 32, 32), 0, wy(46), 0.06);            // head
-  part(new THREE.CapsuleGeometry(0.2, 0.26, 8, 16), 0, wy(80), 0.04);       // neck
-  part(new THREE.CapsuleGeometry(0.6, 2.25, 12, 24), 0, wy(172), 0);        // torso
-  part(new THREE.SphereGeometry(0.33, 24, 24), wx(150), wy(126), 0.05);     // left shoulder (+X)
-  part(new THREE.SphereGeometry(0.33, 24, 24), -wx(150), wy(126), 0.05);    // right shoulder
-  part(new THREE.CapsuleGeometry(0.5, 0.5, 10, 20), 0, wy(264), 0);         // pelvis
-  part(new THREE.CapsuleGeometry(0.16, 2.85, 8, 16), wx(178), wy(190), 0.1);  // left arm
-  part(new THREE.CapsuleGeometry(0.16, 2.85, 8, 16), -wx(178), wy(190), 0.1); // right arm
-  part(new THREE.SphereGeometry(0.16, 16, 16), wx(182), wy(298), 0);        // left hand
-  part(new THREE.SphereGeometry(0.16, 16, 16), -wx(182), wy(298), 0);       // right hand
-  part(new THREE.CapsuleGeometry(0.26, 3.6, 10, 18), 0.5, wy(398), 0);      // left leg
-  part(new THREE.CapsuleGeometry(0.26, 3.6, 10, 18), -0.5, wy(398), 0);     // right leg
-  part(new THREE.SphereGeometry(0.2, 16, 16), 0.55, wy(522), 0);           // left foot
-  part(new THREE.SphereGeometry(0.2, 16, 16), -0.55, wy(522), 0);          // right foot
+  // A fixed part centered at (x, y, z) with optional per-axis scale.
+  function part(geo, x, y, z, sx, sy, sz) {
+    add(geo, function (m) {
+      m.position.set(x, y, z || 0);
+      if (sx != null) m.scale.set(sx, sy, sz);
+    });
+  }
+
+  // A rounded limb segment (capsule) spanning a -> b at the given radius,
+  // oriented along the bone so segments meet at rounded ends (the joints).
+  function bone(ax, ay, bx, by, r) {
+    var a = new THREE.Vector3(ax, ay, 0);
+    var b = new THREE.Vector3(bx, by, 0);
+    var dir = new THREE.Vector3().subVectors(b, a);
+    var geo = new THREE.CapsuleGeometry(r, Math.max(0.001, dir.length() - 2 * r), 10, 18);
+    add(geo, function (m) {
+      m.position.copy(a).add(b).multiplyScalar(0.5);
+      m.quaternion.setFromUnitVectors(Y, dir.normalize());
+    });
+  }
+
+  // ---- head & neck ----
+  part(new THREE.SphereGeometry(0.42, 32, 32), 0, wy(46), 0.05, 0.92, 1.12, 1.0); // ovoid head
+  bone(0, wy(70), 0, wy(106), 0.19);                                              // neck
+
+  // ---- torso: tapered V-shape lathed from a (radius, height) silhouette ----
+  var profile = [
+    [0.00, -0.55], [0.22, -0.50], [0.42, -0.30], [0.55, 0.05], [0.54, 0.45],
+    [0.45, 0.95], [0.42, 1.35], [0.47, 1.80], [0.57, 2.25], [0.60, 2.65],
+    [0.52, 2.95], [0.34, 3.20], [0.18, 3.38], [0.00, 3.45]
+  ].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
+  add(new THREE.LatheGeometry(profile, 28));
+
+  // pectorals — subtle front-of-chest definition
+  [1, -1].forEach(function (s) {
+    part(new THREE.SphereGeometry(0.2, 20, 20), s * 0.2, wy(158), 0.4, 1.0, 0.85, 0.7);
+  });
+
+  // ---- shoulders & arms ----
+  bone(-wx(150) * 0.87, wy(120), wx(150) * 0.87, wy(120), 0.2);          // trapezius / shoulder yoke
+  [1, -1].forEach(function (s) {
+    part(new THREE.SphereGeometry(0.28, 24, 24), s * wx(150), wy(128), 0, 1, 1, 0.9); // deltoid
+    bone(s * wx(150), wy(132), s * wx(166), wy(206), 0.17);              // upper arm -> elbow
+    bone(s * wx(166), wy(206), s * wx(178), wy(292), 0.135);            // forearm -> wrist
+    part(new THREE.SphereGeometry(0.15, 18, 18), s * wx(182), wy(300), 0.04, 0.9, 1.3, 0.5); // hand
+  });
+
+  // ---- legs & feet ----
+  [1, -1].forEach(function (s) {
+    bone(s * 0.27, wy(300), s * 0.3, wy(410), 0.27);                     // thigh -> knee
+    bone(s * 0.3, wy(410), s * 0.32, wy(516), 0.2);                      // calf -> ankle
+    part(new THREE.SphereGeometry(0.18, 18, 18), s * 0.32, wy(524), 0.2, 1.0, 0.6, 2.0); // foot
+  });
 
   g.scale.z = 0.62; // flatten front-to-back
   return g;
