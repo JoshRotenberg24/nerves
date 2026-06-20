@@ -38,26 +38,28 @@ vercel --prod # promote to production
 
 ## How it works
 
-- **Rotate the body** through four angles — Front → Left side → Back → Right side — with the
-  ◄ ► buttons, the slider, **arrow keys**, or by **dragging** the figure (pseudo-3D: hand-drawn
-  SVG frames, no 3D engine, fully offline). Each highlighted point is a pain site.
+- **A real 3D model.** A translucent, glowing body is rendered with [Three.js](https://threejs.org/)
+  (loaded from a CDN, no build step). **Drag** to rotate, **scroll** to zoom; it slowly
+  auto-rotates when left idle. Each glowing line is a nerve routed from its spinal root, out
+  through the limb, to the pain site, and each node is a pain site.
   - 🔴 red = an issue from your own documented clinical picture
   - 🟢 green = a general reference site
-  - Side views show a curated subset; a site only appears on the angles where it's visible.
-- **Click a point** (or a list item) to open its detail card:
-  - involved **nerve roots** and **peripheral nerves**
-  - what's happening and the common structural cause
-  - **"This pain may originate from"** → upstream referral sources
-  - **"This nerve can also refer pain to"** → downstream targets
-  - selecting a site also highlights its related sites (🟡) on the diagram
+- **Click a nerve or node to trace its referrals.** Selecting a site:
+  - lights the selected nerve white and pulses the signal arriving along it;
+  - walks the referral graph **upstream** (`originFrom`) and draws glowing 🔵 connectors —
+    with pulses flowing toward the selection — to show **where the pain is coming from**;
+  - tints the sites it **refers pain to** 🟡, and dims everything else.
+- **The detail card** opens alongside, with the involved **nerve roots** and **peripheral
+  nerves**, what's happening, the common structural cause, and the upstream/downstream
+  referral links (which are themselves clickable to hop along the chain).
 - **Search** filters by site name, nerve, or root (e.g. `C8`, `ulnar`, `sciatic`,
   `trigeminal`).
 
 ### Side orientation
 
-Sites use **anatomical** sides ("your left" = your actual left). On the **front** diagram
-your left appears on the right of the image; on the **back** diagram your left is on the
-left. The note under the diagram reminds you which view you're in.
+Sites use **anatomical** sides ("your left" = your actual left). Back-only sites are mirrored
+into 3D so a "your left" landmark sits on your actual left of the model regardless of which way
+you've rotated it.
 
 ## Editing the data
 
@@ -96,11 +98,19 @@ Built around your documented picture, then extended for general reference:
   with vision loss, referred jaw pain — including the radiofrequency ablation context.
 - **Lower cervical (C5–C7):** the C5/C6 herniation and C6/C7 bulge, radiating into the
   shoulder, arm, elbow, forearm, and the new C8/ulnar ring-and-pinky pattern.
-- **Thoracic outlet (differential):** the supraclavicular compression point that can
-  produce the same C8/T1 ring-and-pinky pattern — included as a differential, not a
-  confirmed diagnosis.
+- **Thoracic outlet (differential), mapped in detail:** the three compression spaces in
+  sequence — the **scalene triangle**, the **costoclavicular space** (clavicle/first rib),
+  and the **subcoracoid / pectoralis-minor space** — plus the two hallmark signs that
+  localize it: **inner-forearm** numbness (medial antebrachial cutaneous nerve, above the
+  elbow) and **Gilliatt–Sumner hand** wasting (T1). Clicking the ring/pinky now traces both
+  the cervical and the TOS pathways back to the lower trunk. Included as a differential, not
+  a confirmed diagnosis.
 - **Left shoulder:** post-SLAP anterior (pec/armpit) and posterior pain, with the
   double-crush link back to the cervical roots.
+- **Thorax / ribs:** the thoracic spine hub (T-levels) and the left rib fractures, with the
+  intercostal nerve traced as it wraps from the spine around the rib to the front — covering
+  local fracture pain, the rib-wrap band (intercostal neuralgia), and costochondral/front-of-rib
+  pain.
 - **Lower body (general):** lumbar, sciatic/piriformis, meralgia, femoral, and
   tibial/peroneal patterns down to the foot.
 

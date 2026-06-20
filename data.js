@@ -108,7 +108,7 @@ const NERVE_SITES = [
     cause: "C5/C6 disc herniation and C6/C7 disc bulge compressing the exiting nerve roots.",
     description:
       "The downstream hub. These roots form the brachial plexus that supplies the shoulder, arm and hand, so irritation here radiates down the whole limb (cervical radiculopathy).",
-    refersTo: ["thoracic-outlet", "shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
+    refersTo: ["thoracic-outlet", "tos-scalene", "shoulder-ant", "shoulder-post", "upper-arm", "elbow", "forearm", "thumb-index", "ring-pinky"],
     originFrom: [],
     personal: true,
     personalNote:
@@ -116,7 +116,7 @@ const NERVE_SITES = [
   },
   {
     id: "thoracic-outlet",
-    label: "Thoracic outlet (supraclavicular)",
+    label: "Thoracic outlet (overview)",
     region: "Shoulder & arm",
     side: "left",
     front: { x: 146, y: 108 },
@@ -126,8 +126,8 @@ const NERVE_SITES = [
     cause:
       "Compression of the lower brachial plexus between the scalene muscles, the first rib, and the clavicle (thoracic outlet syndrome).",
     description:
-      "A separate compression point between your neck and shoulder. Because it pinches the LOWER trunk (C8/T1), classic TOS produces ring/pinky symptoms — the same distribution as your new finding — plus a heavy, aching arm that worsens with overhead or carrying positions. Differential only, not a confirmed diagnosis: a C8/ulnar pattern can come from the neck (C7/T1 progression) OR from compression here, and it fits the postural double-crush picture (a hiked, forward-rolled shoulder narrows the outlet). A clinician can distinguish them with provocative tests and nerve studies.",
-    refersTo: ["upper-arm", "forearm", "ring-pinky"],
+      "A separate compression point between your neck and shoulder. Because it pinches the LOWER trunk (C8/T1), classic TOS produces ring/pinky symptoms — the same distribution as your new finding — plus a heavy, aching arm that worsens with overhead or carrying positions. The outlet narrows at three specific spaces in sequence — the scalene triangle, the costoclavicular space, and the subcoracoid / pectoralis-minor space — each mapped here as its own point. Differential only, not a confirmed diagnosis: a C8/ulnar pattern can come from the neck (C7/T1 progression) OR from compression here, and it fits the postural double-crush picture (a hiked, forward-rolled shoulder narrows the outlet). A clinician can distinguish them with provocative tests and nerve studies.",
+    refersTo: ["tos-scalene", "tos-costoclavicular", "tos-pecminor", "medial-forearm", "ring-pinky", "upper-arm"],
     originFrom: ["lower-cervical"],
     personal: false
   },
@@ -242,10 +242,170 @@ const NERVE_SITES = [
     description:
       "Your new, prominent left ring/pinky symptoms map to C8 (ulnar), one level below your documented injuries.",
     refersTo: [],
-    originFrom: ["lower-cervical", "forearm", "thoracic-outlet"],
+    originFrom: ["lower-cervical", "forearm", "thoracic-outlet", "tos-costoclavicular"],
     personal: true,
     personalNote:
       "NEW symptom worth flagging to your team: a C8 pattern implies progression below the known C5/C6 and C6/C7 levels (possible C7/T1) — or compression at the thoracic outlet. Both are differentials worth distinguishing."
+  },
+
+  /* ----------------------- Thoracic outlet — the three compression spaces ----------------------- */
+  {
+    id: "tos-scalene",
+    label: "Scalene triangle (interscalene TOS)",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 134, y: 104 },
+    left: { x: 110, y: 102 },
+    roots: ["C5", "C6", "C7", "C8", "T1"],
+    nerves: ["Brachial plexus roots / trunks", "Anterior & middle scalene muscles"],
+    cause:
+      "The brachial plexus is squeezed in the interscalene triangle between the anterior and middle scalene muscles — tight or spastic scalenes, a cervical rib, or a fibrous band.",
+    description:
+      "The most proximal and most common compression point in neurogenic TOS. The plexus leaves the neck between the two scalene muscles; when that gap narrows, the lower trunk (C8/T1) takes the brunt, producing inner-arm and ring/pinky symptoms that mimic a neck or ulnar problem.",
+    refersTo: ["tos-costoclavicular", "medial-forearm", "ring-pinky", "hand-intrinsics", "upper-arm"],
+    originFrom: ["lower-cervical"],
+    personal: false
+  },
+  {
+    id: "tos-costoclavicular",
+    label: "Costoclavicular space (clavicle / first rib)",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 148, y: 116 },
+    left: { x: 104, y: 114 },
+    roots: ["C8", "T1"],
+    nerves: ["Lower trunk of brachial plexus", "Subclavian artery & vein"],
+    cause:
+      "The neurovascular bundle is pinched between the clavicle and the first rib — narrowed by a drooped or retracted shoulder, a healed clavicle fracture, or a high first rib.",
+    description:
+      "The middle of the three thoracic-outlet spaces, and the one most often released surgically (first-rib resection). Because the subclavian vessels run here too, this is where the vascular forms of TOS (arm swelling or coldness) arise alongside the neural ones.",
+    refersTo: ["tos-pecminor", "medial-forearm", "ring-pinky", "hand-intrinsics"],
+    originFrom: ["tos-scalene", "lower-cervical"],
+    personal: false
+  },
+  {
+    id: "tos-pecminor",
+    label: "Subcoracoid / pectoralis-minor space",
+    region: "Shoulder & arm",
+    side: "left",
+    front: { x: 160, y: 126 },
+    left: { x: 98, y: 126 },
+    roots: ["C8", "T1"],
+    nerves: ["Cords of brachial plexus", "Pectoralis minor tendon", "Axillary vessels"],
+    cause:
+      "The cords of the plexus are compressed under the pectoralis minor as it crosses to the coracoid — typically with a forward-rolled, protracted shoulder or the arm raised overhead.",
+    description:
+      "The most distal thoracic-outlet space (pectoralis-minor / hyperabduction syndrome). Symptoms reproduce when the arm goes overhead, which tents the cords under a tight pec minor — the direct link to the postural, forward-shoulder picture.",
+    refersTo: ["medial-forearm", "ring-pinky", "upper-arm"],
+    originFrom: ["tos-costoclavicular"],
+    personal: false
+  },
+  {
+    id: "medial-forearm",
+    label: "Inner forearm (medial antebrachial cutaneous)",
+    region: "Hand & forearm",
+    side: "left",
+    front: { x: 176, y: 250 },
+    left: { x: 112, y: 248 },
+    roots: ["C8", "T1"],
+    nerves: ["Medial antebrachial cutaneous nerve", "Lower trunk / medial cord"],
+    cause:
+      "Compression of the lower trunk / medial cord at the thoracic outlet, upstream of the elbow.",
+    description:
+      "The single most useful localizing sign for TOS. The medial antebrachial cutaneous nerve branches off the plexus ABOVE the elbow, so numbness or burning along the inner forearm cannot be explained by a cubital-tunnel (elbow) ulnar pinch — it points to the lower trunk at the thoracic outlet, or to a C8/T1 root.",
+    refersTo: [],
+    originFrom: ["tos-scalene", "tos-costoclavicular", "tos-pecminor", "lower-cervical"],
+    personal: false
+  },
+  {
+    id: "hand-intrinsics",
+    label: "Hand wasting (Gilliatt–Sumner hand, T1)",
+    region: "Hand & forearm",
+    side: "left",
+    front: { x: 170, y: 300 },
+    left: { x: 104, y: 298 },
+    roots: ["T1", "C8"],
+    nerves: ["Median (thenar) & ulnar intrinsic muscles", "Lower trunk (T1)"],
+    cause:
+      "Chronic lower-trunk (T1) compression at the thoracic outlet denervating the small muscles of the hand.",
+    description:
+      "The motor end-stage of true neurogenic TOS. The classic 'Gilliatt–Sumner hand' wastes the thenar (thumb) pad more than the hypothenar, with weak pinch and grip. Visible wasting here is a red flag that warrants prompt nerve studies and specialist review.",
+    refersTo: [],
+    originFrom: ["tos-scalene", "tos-costoclavicular"],
+    personal: false
+  },
+
+  /* ----------------------- Thorax — ribs & intercostal nerves ----------------------- */
+  {
+    id: "thoracic-spine",
+    label: "Mid-back / thoracic spine (T-levels)",
+    region: "Chest & ribs",
+    side: "central",
+    back: { x: 120, y: 175 },
+    left: { x: 126, y: 175 },
+    right: { x: 114, y: 175 },
+    roots: ["T5", "T6", "T7", "T8"],
+    nerves: ["Thoracic nerve roots", "Intercostal nerves (origin)"],
+    cause: "Thoracic facet/disc irritation or post-traumatic sensitization at the level that supplies the injured ribs.",
+    description:
+      "The thoracic mirror of your neck and lower back. Each thoracic root becomes an intercostal nerve that wraps under its rib all the way to the front, so irritation here can be felt anywhere along that rib — including the front of the chest, far from the spine.",
+    refersTo: ["rib-fracture", "intercostal-band", "costochondral"],
+    originFrom: [],
+    personal: false
+  },
+  {
+    id: "rib-fracture",
+    label: "Left rib fractures (healed)",
+    region: "Chest & ribs",
+    side: "left",
+    back: { x: 88, y: 170 },
+    left: { x: 122, y: 168 },
+    roots: ["T6", "T7", "T8"],
+    nerves: ["Intercostal nerves", "Rib / periosteum"],
+    cause:
+      "Healed fractures of the left ribs with persistent post-traumatic chest-wall pain; the intercostal nerve under the injured rib can stay sensitized after the bone unites.",
+    description:
+      "Local pain at the site of your healed left rib fractures. Even once the bone heals, the intercostal nerve running in the groove under each rib can remain irritated, so the area stays tender and flares with deep breaths, coughing, twisting, or direct pressure.",
+    refersTo: ["intercostal-band", "costochondral"],
+    originFrom: ["thoracic-spine"],
+    personal: true,
+    personalNote:
+      "Your documented left rib fractures. Pain that lingers well after healing is typically intercostal-nerve driven rather than the bone itself, and can flare with breathing or position."
+  },
+  {
+    id: "intercostal-band",
+    label: "Rib-wrap band (intercostal neuralgia)",
+    region: "Chest & ribs",
+    side: "left",
+    front: { x: 150, y: 176 },
+    back: { x: 98, y: 176 },
+    left: { x: 116, y: 176 },
+    roots: ["T6", "T7", "T8"],
+    nerves: ["Intercostal nerve (T6–T8)"],
+    cause:
+      "Intercostal neuralgia — the intercostal nerve irritated anywhere from the thoracic root to the chest wall, often after rib trauma.",
+    description:
+      "A band of burning, stabbing, or tight pain that follows a single rib from the spine around the side to the front. Classic intercostal neuralgia: it can be triggered by the healed fractures or referred from the thoracic nerve root, which is why the front of the chest can hurt with no problem there.",
+    refersTo: ["costochondral"],
+    originFrom: ["thoracic-spine", "rib-fracture"],
+    personal: false
+  },
+  {
+    id: "costochondral",
+    label: "Front of rib / costochondral (costochondritis)",
+    region: "Chest & ribs",
+    side: "left",
+    front: { x: 140, y: 180 },
+    left: { x: 98, y: 180 },
+    roots: ["T6", "T7"],
+    nerves: ["Anterior cutaneous branch of intercostal nerve", "Costochondral junction"],
+    cause:
+      "Inflammation or strain at the costochondral junctions where the ribs meet the sternal cartilage (costochondritis), or the front terminus of an intercostal referral.",
+    description:
+      "Sharp, localized pain at the front where the ribs meet the breastbone — the anterior end of the intercostal nerve. Tender to press; can be a primary costochondritis or the front end of a rib-wrap referral from the back.",
+    refersTo: [],
+    originFrom: ["thoracic-spine", "rib-fracture", "intercostal-band"],
+    personal: false
   },
 
   /* ----------------------- General lower-body coverage ----------------------- */

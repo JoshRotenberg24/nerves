@@ -4,15 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nerve Pain Referral Guide</title>
-  <meta name="description" content="An interactive 3D guide for chronic nerve pain: rotate the body, follow each nerve from the spine to the pain site." />
+  <meta name="description" content="An interactive 3D guide for chronic nerve pain: rotate the body, click a nerve, and trace where the referred pain is coming from." />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Three.js (no build step) -->
+  <!-- Three.js — vendored locally (vendor/three) so the exhibit is fully
+       self-contained and needs no network access at runtime. -->
   <script type="importmap">
   {
     "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      "three": "./vendor/three/three.module.js",
+      "three/addons/": "./vendor/three/jsm/"
     }
   }
   </script>
@@ -20,7 +21,7 @@
 <body>
   <header class="site-header">
     <h1>Nerve Pain Referral Guide</h1>
-    <p class="tagline">Rotate the body, follow each nerve from the spine to where it hurts.</p>
+    <p class="tagline">Rotate the body, click a nerve, and trace where the pain is coming from.</p>
   </header>
 
   <div class="disclaimer" role="note">
@@ -34,13 +35,14 @@
     <!-- 3D nerve map -->
     <section class="map-panel" aria-label="3D nerve map">
       <div id="scene" class="scene" role="img"
-           aria-label="3D body showing nerves running from the spine to each pain site. Drag to rotate, scroll to zoom, and click a node to select it."></div>
-      <p class="scene-hint">Drag to rotate · scroll to zoom · click a node</p>
+           aria-label="3D body showing nerves running from the spine to each pain site. Drag to rotate, scroll to zoom, and click a nerve or node to trace its referral path."></div>
+      <p class="scene-hint">Drag to rotate · scroll to zoom · click a nerve to trace its referrals</p>
 
       <ul class="legend" aria-hidden="true">
         <li><span class="dot dot-personal"></span> Your documented issue</li>
         <li><span class="dot dot-general"></span> General reference site</li>
-        <li><span class="dot dot-linked"></span> Related / referral path</li>
+        <li><span class="dot dot-source"></span> Where the pain comes from</li>
+        <li><span class="dot dot-linked"></span> Refers pain to</li>
       </ul>
     </section>
 
