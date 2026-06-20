@@ -729,13 +729,44 @@ function buildBody(THREE, wx, wy, COL) {
   }
 
   // ---- head & neck ----
-  var headProfile = [
-    [0.00, 66], [0.17, 63], [0.30, 58], [0.37, 52], [0.39, 46],
-    [0.37, 40], [0.31, 34], [0.19, 28], [0.00, 24]
-  ].map(function (p) { return new THREE.Vector2(p[0], wy(p[1])); });
-  add(new THREE.LatheGeometry(headProfile, 28), function (m) { m.scale.set(1, 1, 0.94); m.position.z = 0.02; });
-  add(loftLimb(new THREE.Vector3(0, wy(64), -0.02), new THREE.Vector3(0, wy(112), 0.02),
-    [0.16, 0.19, 0.21, 0.22], 0.92));                                   // neck -> trapezius
+  // The head is lofted from stacked ellipse cross-sections (not a lathe), so it
+  // is an actual skull: taller than wide, a jaw narrowing to the chin, the brow
+  // at the widest point, and the cranium rounding up and back. `zc` shifts each
+  // ring forward/back to carve the side profile (chin forward, occiput behind).
+  function headRing(py, rx, rz, zc) {
+    var y = wy(py), pts = [];
+    for (var j = 0; j < M; j++) {
+      var th = j / M * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(th) * rx, y, (zc || 0) + Math.sin(th) * rz));
+    }
+    return pts;
+  }
+  // Keep the cranium full up high and round it over only at the very top so the
+  // crown is a dome, not a cone. The chin and nose sit close to the face plane
+  // so the profile reads as a head, not a beak.
+  var head = [
+    [63, 0.09, 0.12, 0.05], [59, 0.20, 0.21, 0.02], [54, 0.26, 0.28, 0.00],
+    [49, 0.29, 0.33, -0.01], [44, 0.30, 0.35, -0.02], [39, 0.295, 0.35, -0.04],
+    [34, 0.275, 0.33, -0.06], [30, 0.24, 0.29, -0.075], [26, 0.185, 0.23, -0.085],
+    [23, 0.115, 0.15, -0.09], [20, 0.04, 0.05, -0.09]
+  ];
+  add(surfaceFromRings(head.map(function (r) { return headRing(r[0], r[1], r[2], r[3]); }), true, true));
+  add(loftLimb(new THREE.Vector3(0, wy(59), -0.04), new THREE.Vector3(0, wy(114), 0.0),
+    [0.17, 0.2, 0.24, 0.3], 0.9));                                      // neck, flaring into the trapezius
+  // trapezius — slopes from the base of the skull out to each shoulder, so the
+  // neck reads as a muscled column into the shoulders rather than a thin pole.
+  [1, -1].forEach(function (s) {
+    add(loftLimb(new THREE.Vector3(s * 0.05, wy(74), -0.07), new THREE.Vector3(s * 0.46, wy(120), -0.03),
+      [0.11, 0.17, 0.19, 0.15], 0.8));
+  });
+
+  // face & neck detail
+  accentLine([[-0.2, wy(44), 0.30], [0, wy(43), 0.34], [0.2, wy(44), 0.30]], 0.011);      // brow ridge
+  accentLine([[0, wy(44), 0.33], [0, wy(49), 0.35], [0, wy(54), 0.31]], 0.010);            // nose bridge
+  [1, -1].forEach(function (s) {
+    accentLine([[0, wy(62), 0.14], [s * 0.19, wy(57), 0.06], [s * 0.27, wy(49), -0.05]], 0.011); // jawline
+    accentLine([[s * 0.15, wy(55), 0.04], [s * 0.06, wy(108), 0.15]], 0.012);             // sternocleidomastoid
+  });
 
   // ---- torso ----
   // (py, half-width X, half-depth Z, z-offset) from pelvis up to the neck base.
