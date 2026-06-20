@@ -616,30 +616,33 @@ function makeRimMaterial(THREE, hex, power, intensity) {
   });
 }
 
-/* Translucent, glowing male figure: a tapered (V-shaped) torso lathed from a
- * side silhouette, a trapezius bridge with deltoid caps for broad shoulders,
- * jointed two-segment arms (upper arm + forearm) and legs (thigh + calf), an
- * ovoid head, and forward-pointing feet. Each part is drawn as a soft inner
- * skin plus a fresnel rim shell, then the whole figure is flattened
- * front-to-back so it reads as a body rather than a set of tubes. Every
- * landmark stays anchored to the viewBox mapping (wx/wy) so the nerves and
- * pain nodes still register on the figure. */
+/* Translucent, glowing male figure, modelled rather than blocked out of
+ * spheres. The torso and limbs are lofted surfaces: each is a stack of
+ * cross-section rings whose width/depth vary along the body, so the form has
+ * real anatomy — a broad chest tapering through obliques to the waist, hips and
+ * glutes, and limbs that swell at the muscle belly (deltoid, biceps, quad,
+ * calf) and neck down to the joints. Cross-sections are super-ellipses, giving
+ * a flatter chest/back and rounded sides instead of a circular tube. Etched
+ * accent lines (clavicles, sternum, linea alba, abdominal and inguinal grooves)
+ * add surface detail. Every landmark stays anchored to the viewBox mapping
+ * (wx/wy) so the nerves and pain nodes still register on the figure. */
 function buildBody(THREE, wx, wy, COL) {
   var g = new THREE.Group();
-  // The skin is a translucent volume (not a wireframe): opaque enough to read as
-  // a solid body, but see-through so the spine and nerves still show inside it.
-  // depthWrite stays off so internal structures are never occluded.
+  // Translucent volume: solid enough to read as a body, see-through enough that
+  // the spine and nerves still show inside. depthWrite off so nothing internal
+  // is occluded.
   var skin = new THREE.MeshStandardMaterial({
-    color: COL.body, transparent: true, opacity: 0.26,
-    roughness: 0.85, metalness: 0.0, depthWrite: false, side: THREE.DoubleSide
+    color: COL.body, transparent: true, opacity: 0.24,
+    roughness: 0.82, metalness: 0.0, depthWrite: false, side: THREE.DoubleSide
   });
-  // A thinner, calmer fresnel edge that accents the silhouette rather than
-  // becoming the whole figure.
-  var rim = makeRimMaterial(THREE, 0x7cc8ff, 2.8, 0.75);
-  var Y = new THREE.Vector3(0, 1, 0);
+  var rim = makeRimMaterial(THREE, 0x7cc8ff, 2.8, 0.7);
+  // Brighter, thin "etched" lines for muscle/skeletal definition.
+  var accent = new THREE.MeshBasicMaterial({
+    color: 0xafe2ff, transparent: true, opacity: 0.42,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
 
-  // Draw a geometry as both the soft skin and the glowing rim shell, placed by
-  // an optional callback so callers can position / orient / scale it.
+  // Draw a geometry as both the soft skin and the glowing rim shell.
   function add(geo, place) {
     [skin, rim].forEach(function (mat) {
       var m = new THREE.Mesh(geo, mat);
@@ -647,8 +650,6 @@ function buildBody(THREE, wx, wy, COL) {
       g.add(m);
     });
   }
-
-  // A fixed part centered at (x, y, z) with optional per-axis scale.
   function part(geo, x, y, z, sx, sy, sz) {
     add(geo, function (m) {
       m.position.set(x, y, z || 0);
@@ -656,63 +657,134 @@ function buildBody(THREE, wx, wy, COL) {
     });
   }
 
-  // A rounded limb segment (capsule) spanning a -> b at the given radius,
-  // oriented along the bone so segments meet at rounded ends (the joints).
-  function bone(ax, ay, bx, by, r) {
-    var a = new THREE.Vector3(ax, ay, 0);
-    var b = new THREE.Vector3(bx, by, 0);
-    var dir = new THREE.Vector3().subVectors(b, a);
-    var geo = new THREE.CapsuleGeometry(r, Math.max(0.001, dir.length() - 2 * r), 10, 18);
-    add(geo, function (m) {
-      m.position.copy(a).add(b).multiplyScalar(0.5);
-      m.quaternion.setFromUnitVectors(Y, dir.normalize());
-    });
+  // ---- lofting core ------------------------------------------------------
+  // Stitch a list of equal-length rings (each an array of Vector3) into a
+  // smooth surface, optionally fanning a cap over the first/last ring.
+  function surfaceFromRings(rings, capStart, capEnd) {
+    var M = rings[0].length, N = rings.length, pos = [], idx = [], i, j;
+    for (i = 0; i < N; i++) for (j = 0; j < M; j++) {
+      var p = rings[i][j]; pos.push(p.x, p.y, p.z);
+    }
+    for (i = 0; i < N - 1; i++) for (j = 0; j < M; j++) {
+      var j2 = (j + 1) % M, a = i * M + j, b = i * M + j2, c = (i + 1) * M + j, d = (i + 1) * M + j2;
+      idx.push(a, c, b, b, c, d);
+    }
+    function cap(ri, rev) {
+      var ring = rings[ri], cx = 0, cy = 0, cz = 0, k;
+      for (k = 0; k < M; k++) { cx += ring[k].x; cy += ring[k].y; cz += ring[k].z; }
+      var ci = pos.length / 3; pos.push(cx / M, cy / M, cz / M);
+      for (k = 0; k < M; k++) {
+        var k2 = (k + 1) % M, base = ri * M;
+        if (rev) idx.push(ci, base + k2, base + k); else idx.push(ci, base + k, base + k2);
+      }
+    }
+    if (capStart) cap(0, true);
+    if (capEnd) cap(N - 1, false);
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  var M = 22; // points per cross-section ring
+  // A super-elliptical ring on the XZ plane: flatter front/back, rounded sides.
+  function torsoRing(py, rx, rz, zoff) {
+    var y = wy(py), pts = [], n = 2.3;
+    for (var j = 0; j < M; j++) {
+      var th = j / M * Math.PI * 2, cx = Math.cos(th), cz = Math.sin(th);
+      var ex = Math.sign(cx) * Math.pow(Math.abs(cx), 2 / n);
+      var ez = Math.sign(cz) * Math.pow(Math.abs(cz), 2 / n);
+      pts.push(new THREE.Vector3(ex * rx, y, (zoff || 0) + ez * rz));
+    }
+    return pts;
+  }
+  // A tapered, oriented limb: rings perpendicular to the a->b axis whose radius
+  // follows `radii` (muscle belly -> joint). `depth` flattens front-to-back.
+  function loftLimb(a, b, radii, depth) {
+    var dir = b.clone().sub(a), len = dir.length(); dir.normalize();
+    var ax1 = new THREE.Vector3(1, 0, 0).projectOnPlane(dir);
+    if (ax1.lengthSq() < 1e-4) ax1.set(0, 0, 1).projectOnPlane(dir);
+    ax1.normalize();
+    var ax2 = new THREE.Vector3().crossVectors(dir, ax1).normalize();
+    var rings = [], N = radii.length, dz = depth == null ? 0.82 : depth;
+    for (var i = 0; i < N; i++) {
+      var c = a.clone().addScaledVector(dir, (i / (N - 1)) * len), r = radii[i], ring = [];
+      for (var j = 0; j < M; j++) {
+        var th = j / M * Math.PI * 2;
+        ring.push(c.clone()
+          .addScaledVector(ax1, Math.cos(th) * r)
+          .addScaledVector(ax2, Math.sin(th) * r * dz));
+      }
+      rings.push(ring);
+    }
+    return surfaceFromRings(rings, true, true);
+  }
+  // A thin etched line following a path on (or just over) the body surface.
+  function accentLine(points, r) {
+    var curve = new THREE.CatmullRomCurve3(points.map(function (p) {
+      return new THREE.Vector3(p[0], p[1], p[2]);
+    }));
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 24, r || 0.012, 6, false), accent));
   }
 
   // ---- head & neck ----
-  part(new THREE.SphereGeometry(0.46, 32, 32), 0, wy(48), 0.05, 0.88, 1.08, 0.96); // ovoid head
-  part(new THREE.SphereGeometry(0.2, 20, 16), 0, wy(60), -0.18, 1.0, 0.7, 0.7);     // jaw / chin mass
-  bone(0, wy(66), 0, wy(110), 0.22);                                                // neck (shorter, thicker)
+  var headProfile = [
+    [0.00, 66], [0.17, 63], [0.30, 58], [0.37, 52], [0.39, 46],
+    [0.37, 40], [0.31, 34], [0.19, 28], [0.00, 24]
+  ].map(function (p) { return new THREE.Vector2(p[0], wy(p[1])); });
+  add(new THREE.LatheGeometry(headProfile, 28), function (m) { m.scale.set(1, 1, 0.94); m.position.z = 0.02; });
+  add(loftLimb(new THREE.Vector3(0, wy(64), -0.02), new THREE.Vector3(0, wy(112), 0.02),
+    [0.16, 0.19, 0.21, 0.22], 0.92));                                   // neck -> trapezius
 
-  // ---- torso: full male V-taper lathed from a (radius, height) silhouette.
-  // Broad chest and shoulders, a defined waist, and real hips/pelvis so the
-  // outline reads as a man rather than a thin pole. ----
-  var profile = [
-    [0.00, -0.66], [0.30, -0.60], [0.50, -0.44], [0.60, -0.26], [0.58, -0.02],
-    [0.50, 0.34],  [0.46, 0.66],  [0.50, 1.02],  [0.58, 1.50],  [0.64, 2.05],
-    [0.63, 2.50],  [0.55, 2.92],  [0.40, 3.20],  [0.20, 3.36],  [0.00, 3.44]
-  ].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
-  add(new THREE.LatheGeometry(profile, 32));
+  // ---- torso ----
+  // (py, half-width X, half-depth Z, z-offset) from pelvis up to the neck base.
+  var torso = [
+    [314, 0.30, 0.22, -0.02], [306, 0.50, 0.36, -0.05], [298, 0.53, 0.38, -0.05],
+    [284, 0.49, 0.35, -0.02], [266, 0.43, 0.31, 0.00],  [248, 0.44, 0.31, 0.01],
+    [226, 0.50, 0.34, 0.02],  [200, 0.58, 0.37, 0.03],  [176, 0.63, 0.39, 0.03],
+    [152, 0.62, 0.37, 0.02],  [132, 0.58, 0.34, 0.00],  [120, 0.46, 0.30, -0.01],
+    [112, 0.30, 0.24, -0.01]
+  ];
+  add(surfaceFromRings(torso.map(function (r) { return torsoRing(r[0], r[1], r[2], r[3]); }), true, true));
 
-  // pectorals — front-of-chest definition
+  // ---- arms (deltoid + biceps belly -> elbow -> forearm belly -> wrist) ----
   [1, -1].forEach(function (s) {
-    part(new THREE.SphereGeometry(0.24, 20, 20), s * 0.22, wy(158), 0.34, 1.05, 0.8, 0.7);
-  });
-  // glutes — back-of-pelvis mass so the hips read in profile
-  [1, -1].forEach(function (s) {
-    part(new THREE.SphereGeometry(0.26, 18, 18), s * 0.2, wy(300), -0.34, 1.0, 0.9, 0.7);
-  });
-
-  // ---- shoulders & arms ----
-  bone(-0.6, wy(122), 0.6, wy(122), 0.24);                               // trapezius / shoulder yoke
-  [1, -1].forEach(function (s) {
-    part(new THREE.SphereGeometry(0.32, 24, 24), s * 0.6, wy(128), 0, 1, 1, 0.92); // deltoid cap
-    bone(s * wx(150), wy(134), s * wx(166), wy(206), 0.2);               // upper arm -> elbow
-    bone(s * wx(166), wy(206), s * wx(178), wy(292), 0.155);            // forearm -> wrist
-    part(new THREE.SphereGeometry(0.17, 18, 18), s * wx(182), wy(302), 0.04, 0.9, 1.35, 0.55); // hand
-  });
-
-  // ---- legs & feet ----
-  // Thighs sit close at the pelvis (their inner edges meet at the midline) and
-  // taper to the knee, so the lower body reads as solid legs, not parallel pipes.
-  [1, -1].forEach(function (s) {
-    bone(s * 0.26, wy(306), s * 0.3, wy(412), 0.35);                     // thigh -> knee
-    part(new THREE.SphereGeometry(0.22, 18, 18), s * 0.3, wy(414), 0);   // knee
-    bone(s * 0.3, wy(416), s * 0.33, wy(516), 0.24);                     // calf -> ankle
-    part(new THREE.SphereGeometry(0.2, 18, 18), s * 0.33, wy(524), 0.22, 1.0, 0.6, 2.1); // foot
+    add(loftLimb(
+      new THREE.Vector3(s * 0.58, wy(124), 0.02), new THREE.Vector3(s * wx(166), wy(206), 0),
+      [0.25, 0.215, 0.185, 0.155], 0.86));                              // upper arm
+    add(loftLimb(
+      new THREE.Vector3(s * wx(166), wy(206), 0), new THREE.Vector3(s * wx(178), wy(292), 0.01),
+      [0.155, 0.165, 0.12, 0.085], 0.84));                             // forearm
+    add(loftLimb(                                                       // hand (flattened)
+      new THREE.Vector3(s * wx(178), wy(294), 0.02), new THREE.Vector3(s * wx(184), wy(314), 0.04),
+      [0.085, 0.115, 0.10, 0.05], 0.4));
   });
 
-  g.scale.z = 0.66; // flatten front-to-back so it reads as a body, not tubes
+  // ---- legs (glute/quad belly -> knee -> calf belly -> ankle) + feet ----
+  [1, -1].forEach(function (s) {
+    add(loftLimb(
+      new THREE.Vector3(s * 0.23, wy(302), -0.02), new THREE.Vector3(s * 0.3, wy(412), 0.01),
+      [0.24, 0.35, 0.33, 0.27, 0.21], 0.9));                           // thigh
+    add(loftLimb(
+      new THREE.Vector3(s * 0.3, wy(412), 0.01), new THREE.Vector3(s * 0.33, wy(516), -0.01),
+      [0.21, 0.235, 0.2, 0.13, 0.095], 0.9));                          // calf
+    add(loftLimb(                                                       // foot (forward wedge)
+      new THREE.Vector3(s * 0.33, wy(515), -0.06), new THREE.Vector3(s * 0.33, wy(520), 0.5),
+      [0.11, 0.13, 0.115, 0.06], 0.55));
+  });
+
+  // ---- etched surface detail ----
+  [1, -1].forEach(function (s) {
+    accentLine([[0, wy(122), 0.30], [s * 0.22, wy(120), 0.27], [s * 0.46, wy(124), 0.14]], 0.014); // clavicle
+    accentLine([[s * 0.22, wy(150), 0.36], [s * 0.30, wy(162), 0.30], [s * 0.18, wy(176), 0.30]], 0.012); // pec fold
+    accentLine([[s * 0.40, wy(286), 0.28], [s * 0.20, wy(302), 0.26], [0, wy(312), 0.22]], 0.013); // inguinal V
+  });
+  accentLine([[0, wy(140), 0.37], [0, wy(176), 0.39], [0, wy(210), 0.36], [0, wy(250), 0.31]], 0.012); // sternum + linea alba
+  [206, 224, 242].forEach(function (py) {                              // abdominal grooves
+    accentLine([[-0.24, wy(py), 0.30], [0, wy(py), 0.345], [0.24, wy(py), 0.30]], 0.011);
+  });
+
   return g;
 }
 
