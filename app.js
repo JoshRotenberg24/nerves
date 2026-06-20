@@ -197,7 +197,7 @@ function walkChain(startId, key) {
     THREE = await import("three");
     OrbitControls = (await import("three/addons/controls/OrbitControls.js")).OrbitControls;
   } catch (err) {
-    showSceneError("The 3D library could not be loaded (it needs network access).");
+    showSceneError("The 3D library could not be loaded.");
     return;
   }
   try {
