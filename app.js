@@ -570,6 +570,10 @@ function routeNerve(THREE, s, start, end, wy) {
     pts.push(new THREE.Vector3(sign * 0.12, wy(258), -0.05)); // exit the lumbar spine
     pts.push(new THREE.Vector3(sign * 0.5, wy(294), 0.12));   // through the hip / buttock
     if (end.y < wy(430)) pts.push(new THREE.Vector3(sign * 0.55, wy(432), 0.22)); // past the knee
+  } else if (region === "Chest & ribs" && Math.abs(end.x) > 0.2) {
+    // intercostal nerve wraps from the spine, around the rib, to the chest wall
+    var sx = end.x >= 0 ? 1 : -1;
+    pts.push(new THREE.Vector3(sx * (Math.abs(end.x) + 0.45), (start.y + end.y) / 2, 0.05));
   } else if (head) {
     pts.push(new THREE.Vector3(sign * 0.18, wy(72), end.z * 0.3)); // up toward the occiput / face
   } else {

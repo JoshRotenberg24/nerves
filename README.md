@@ -107,6 +107,10 @@ Built around your documented picture, then extended for general reference:
   a confirmed diagnosis.
 - **Left shoulder:** post-SLAP anterior (pec/armpit) and posterior pain, with the
   double-crush link back to the cervical roots.
+- **Thorax / ribs:** the thoracic spine hub (T-levels) and the left rib fractures, with the
+  intercostal nerve traced as it wraps from the spine around the rib to the front — covering
+  local fracture pain, the rib-wrap band (intercostal neuralgia), and costochondral/front-of-rib
+  pain.
 - **Lower body (general):** lumbar, sciatic/piriformis, meralgia, femoral, and
   tibial/peroneal patterns down to the foot.
 

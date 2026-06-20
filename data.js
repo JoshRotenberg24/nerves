@@ -335,6 +335,79 @@ const NERVE_SITES = [
     personal: false
   },
 
+  /* ----------------------- Thorax — ribs & intercostal nerves ----------------------- */
+  {
+    id: "thoracic-spine",
+    label: "Mid-back / thoracic spine (T-levels)",
+    region: "Chest & ribs",
+    side: "central",
+    back: { x: 120, y: 175 },
+    left: { x: 126, y: 175 },
+    right: { x: 114, y: 175 },
+    roots: ["T5", "T6", "T7", "T8"],
+    nerves: ["Thoracic nerve roots", "Intercostal nerves (origin)"],
+    cause: "Thoracic facet/disc irritation or post-traumatic sensitization at the level that supplies the injured ribs.",
+    description:
+      "The thoracic mirror of your neck and lower back. Each thoracic root becomes an intercostal nerve that wraps under its rib all the way to the front, so irritation here can be felt anywhere along that rib — including the front of the chest, far from the spine.",
+    refersTo: ["rib-fracture", "intercostal-band", "costochondral"],
+    originFrom: [],
+    personal: false
+  },
+  {
+    id: "rib-fracture",
+    label: "Left rib fractures (healed)",
+    region: "Chest & ribs",
+    side: "left",
+    back: { x: 88, y: 170 },
+    left: { x: 122, y: 168 },
+    roots: ["T6", "T7", "T8"],
+    nerves: ["Intercostal nerves", "Rib / periosteum"],
+    cause:
+      "Healed fractures of the left ribs with persistent post-traumatic chest-wall pain; the intercostal nerve under the injured rib can stay sensitized after the bone unites.",
+    description:
+      "Local pain at the site of your healed left rib fractures. Even once the bone heals, the intercostal nerve running in the groove under each rib can remain irritated, so the area stays tender and flares with deep breaths, coughing, twisting, or direct pressure.",
+    refersTo: ["intercostal-band", "costochondral"],
+    originFrom: ["thoracic-spine"],
+    personal: true,
+    personalNote:
+      "Your documented left rib fractures. Pain that lingers well after healing is typically intercostal-nerve driven rather than the bone itself, and can flare with breathing or position."
+  },
+  {
+    id: "intercostal-band",
+    label: "Rib-wrap band (intercostal neuralgia)",
+    region: "Chest & ribs",
+    side: "left",
+    front: { x: 150, y: 176 },
+    back: { x: 98, y: 176 },
+    left: { x: 116, y: 176 },
+    roots: ["T6", "T7", "T8"],
+    nerves: ["Intercostal nerve (T6–T8)"],
+    cause:
+      "Intercostal neuralgia — the intercostal nerve irritated anywhere from the thoracic root to the chest wall, often after rib trauma.",
+    description:
+      "A band of burning, stabbing, or tight pain that follows a single rib from the spine around the side to the front. Classic intercostal neuralgia: it can be triggered by the healed fractures or referred from the thoracic nerve root, which is why the front of the chest can hurt with no problem there.",
+    refersTo: ["costochondral"],
+    originFrom: ["thoracic-spine", "rib-fracture"],
+    personal: false
+  },
+  {
+    id: "costochondral",
+    label: "Front of rib / costochondral (costochondritis)",
+    region: "Chest & ribs",
+    side: "left",
+    front: { x: 140, y: 180 },
+    left: { x: 98, y: 180 },
+    roots: ["T6", "T7"],
+    nerves: ["Anterior cutaneous branch of intercostal nerve", "Costochondral junction"],
+    cause:
+      "Inflammation or strain at the costochondral junctions where the ribs meet the sternal cartilage (costochondritis), or the front terminus of an intercostal referral.",
+    description:
+      "Sharp, localized pain at the front where the ribs meet the breastbone — the anterior end of the intercostal nerve. Tender to press; can be a primary costochondritis or the front end of a rib-wrap referral from the back.",
+    refersTo: [],
+    originFrom: ["thoracic-spine", "rib-fracture", "intercostal-band"],
+    personal: false
+  },
+
   /* ----------------------- General lower-body coverage ----------------------- */
   {
     id: "lumbar",
