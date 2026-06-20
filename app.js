@@ -626,11 +626,16 @@ function makeRimMaterial(THREE, hex, power, intensity) {
  * pain nodes still register on the figure. */
 function buildBody(THREE, wx, wy, COL) {
   var g = new THREE.Group();
+  // The skin is a translucent volume (not a wireframe): opaque enough to read as
+  // a solid body, but see-through so the spine and nerves still show inside it.
+  // depthWrite stays off so internal structures are never occluded.
   var skin = new THREE.MeshStandardMaterial({
-    color: COL.body, transparent: true, opacity: 0.1,
-    roughness: 1.0, metalness: 0.0, depthWrite: false, side: THREE.DoubleSide
+    color: COL.body, transparent: true, opacity: 0.26,
+    roughness: 0.85, metalness: 0.0, depthWrite: false, side: THREE.DoubleSide
   });
-  var rim = makeRimMaterial(THREE, 0x6fc0ff, 2.3, 1.05);
+  // A thinner, calmer fresnel edge that accents the silhouette rather than
+  // becoming the whole figure.
+  var rim = makeRimMaterial(THREE, 0x7cc8ff, 2.8, 0.75);
   var Y = new THREE.Vector3(0, 1, 0);
 
   // Draw a geometry as both the soft skin and the glowing rim shell, placed by
@@ -665,39 +670,49 @@ function buildBody(THREE, wx, wy, COL) {
   }
 
   // ---- head & neck ----
-  part(new THREE.SphereGeometry(0.42, 32, 32), 0, wy(46), 0.05, 0.92, 1.12, 1.0); // ovoid head
-  bone(0, wy(70), 0, wy(106), 0.19);                                              // neck
+  part(new THREE.SphereGeometry(0.46, 32, 32), 0, wy(48), 0.05, 0.88, 1.08, 0.96); // ovoid head
+  part(new THREE.SphereGeometry(0.2, 20, 16), 0, wy(60), -0.18, 1.0, 0.7, 0.7);     // jaw / chin mass
+  bone(0, wy(66), 0, wy(110), 0.22);                                                // neck (shorter, thicker)
 
-  // ---- torso: tapered V-shape lathed from a (radius, height) silhouette ----
+  // ---- torso: full male V-taper lathed from a (radius, height) silhouette.
+  // Broad chest and shoulders, a defined waist, and real hips/pelvis so the
+  // outline reads as a man rather than a thin pole. ----
   var profile = [
-    [0.00, -0.55], [0.22, -0.50], [0.42, -0.30], [0.55, 0.05], [0.54, 0.45],
-    [0.45, 0.95], [0.42, 1.35], [0.47, 1.80], [0.57, 2.25], [0.60, 2.65],
-    [0.52, 2.95], [0.34, 3.20], [0.18, 3.38], [0.00, 3.45]
+    [0.00, -0.66], [0.30, -0.60], [0.50, -0.44], [0.60, -0.26], [0.58, -0.02],
+    [0.50, 0.34],  [0.46, 0.66],  [0.50, 1.02],  [0.58, 1.50],  [0.64, 2.05],
+    [0.63, 2.50],  [0.55, 2.92],  [0.40, 3.20],  [0.20, 3.36],  [0.00, 3.44]
   ].map(function (p) { return new THREE.Vector2(p[0], p[1]); });
-  add(new THREE.LatheGeometry(profile, 28));
+  add(new THREE.LatheGeometry(profile, 32));
 
-  // pectorals — subtle front-of-chest definition
+  // pectorals — front-of-chest definition
   [1, -1].forEach(function (s) {
-    part(new THREE.SphereGeometry(0.2, 20, 20), s * 0.2, wy(158), 0.4, 1.0, 0.85, 0.7);
+    part(new THREE.SphereGeometry(0.24, 20, 20), s * 0.22, wy(158), 0.34, 1.05, 0.8, 0.7);
+  });
+  // glutes — back-of-pelvis mass so the hips read in profile
+  [1, -1].forEach(function (s) {
+    part(new THREE.SphereGeometry(0.26, 18, 18), s * 0.2, wy(300), -0.34, 1.0, 0.9, 0.7);
   });
 
   // ---- shoulders & arms ----
-  bone(-wx(150) * 0.87, wy(120), wx(150) * 0.87, wy(120), 0.2);          // trapezius / shoulder yoke
+  bone(-0.6, wy(122), 0.6, wy(122), 0.24);                               // trapezius / shoulder yoke
   [1, -1].forEach(function (s) {
-    part(new THREE.SphereGeometry(0.28, 24, 24), s * wx(150), wy(128), 0, 1, 1, 0.9); // deltoid
-    bone(s * wx(150), wy(132), s * wx(166), wy(206), 0.17);              // upper arm -> elbow
-    bone(s * wx(166), wy(206), s * wx(178), wy(292), 0.135);            // forearm -> wrist
-    part(new THREE.SphereGeometry(0.15, 18, 18), s * wx(182), wy(300), 0.04, 0.9, 1.3, 0.5); // hand
+    part(new THREE.SphereGeometry(0.32, 24, 24), s * 0.6, wy(128), 0, 1, 1, 0.92); // deltoid cap
+    bone(s * wx(150), wy(134), s * wx(166), wy(206), 0.2);               // upper arm -> elbow
+    bone(s * wx(166), wy(206), s * wx(178), wy(292), 0.155);            // forearm -> wrist
+    part(new THREE.SphereGeometry(0.17, 18, 18), s * wx(182), wy(302), 0.04, 0.9, 1.35, 0.55); // hand
   });
 
   // ---- legs & feet ----
+  // Thighs sit close at the pelvis (their inner edges meet at the midline) and
+  // taper to the knee, so the lower body reads as solid legs, not parallel pipes.
   [1, -1].forEach(function (s) {
-    bone(s * 0.27, wy(300), s * 0.3, wy(410), 0.27);                     // thigh -> knee
-    bone(s * 0.3, wy(410), s * 0.32, wy(516), 0.2);                      // calf -> ankle
-    part(new THREE.SphereGeometry(0.18, 18, 18), s * 0.32, wy(524), 0.2, 1.0, 0.6, 2.0); // foot
+    bone(s * 0.26, wy(306), s * 0.3, wy(412), 0.35);                     // thigh -> knee
+    part(new THREE.SphereGeometry(0.22, 18, 18), s * 0.3, wy(414), 0);   // knee
+    bone(s * 0.3, wy(416), s * 0.33, wy(516), 0.24);                     // calf -> ankle
+    part(new THREE.SphereGeometry(0.2, 18, 18), s * 0.33, wy(524), 0.22, 1.0, 0.6, 2.1); // foot
   });
 
-  g.scale.z = 0.62; // flatten front-to-back
+  g.scale.z = 0.66; // flatten front-to-back so it reads as a body, not tubes
   return g;
 }
 
